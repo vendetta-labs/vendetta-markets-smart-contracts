@@ -1,4 +1,3 @@
-import BigNumber from "bignumber.js";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { GameMarket, VChipToken } from "../typechain-types";
@@ -14,14 +13,12 @@ enum GameScore {
   Right = 2,
 }
 
-async function deployVChipToken(
-  totalSupply: string = "1000000"
-): Promise<VChipToken> {
+async function deployVChipToken(totalSupply: string = "1000000"): Promise<VChipToken> {
   const VChipToken = await ethers.getContractFactory("VChipToken");
   const chip = await VChipToken.deploy(ethers.parseEther(totalSupply));
-  console.log(`Chip Addr: ${await chip.getAddress()}`);
-  console.log(`Chip Decimals: ${await chip.decimals()}`);
-  console.log(`Chip Total supply: ${await chip.totalSupply()}`);
+  // console.log(`Chip Addr: ${await chip.getAddress()}`);
+  // console.log(`Chip Decimals: ${await chip.decimals()}`);
+  // console.log(`Chip Total supply: ${await chip.totalSupply()}`);
   return chip;
 }
 
@@ -51,9 +48,7 @@ describe("GameMarket", function () {
     const chip = await deployVChipToken();
     const GameMarket = await ethers.getContractFactory("GameMarket");
 
-    await expect(
-      GameMarket.deploy(await chip.getAddress(), GAMEMARKET_SCORE_NONE, "G2")
-    ).to.be.revertedWith(
+    await expect(GameMarket.deploy(await chip.getAddress(), GAMEMARKET_SCORE_NONE, "G2")).to.be.revertedWith(
       `${GAMEMARKET_LEFT} cannot be ${GAMEMARKET_SCORE_NONE}`
     );
   });
@@ -62,9 +57,7 @@ describe("GameMarket", function () {
     const chip = await deployVChipToken();
     const GameMarket = await ethers.getContractFactory("GameMarket");
 
-    await expect(
-      GameMarket.deploy(await chip.getAddress(), "FNC", GAMEMARKET_SCORE_NONE)
-    ).to.be.revertedWith(
+    await expect(GameMarket.deploy(await chip.getAddress(), "FNC", GAMEMARKET_SCORE_NONE)).to.be.revertedWith(
       `${GAMEMARKET_RIGHT} cannot be ${GAMEMARKET_SCORE_NONE}`
     );
   });
@@ -73,9 +66,7 @@ describe("GameMarket", function () {
     const chip = await deployVChipToken();
     const GameMarket = await ethers.getContractFactory("GameMarket");
 
-    await expect(
-      GameMarket.deploy(await chip.getAddress(), "FNC", "FNC")
-    ).to.be.revertedWith(
+    await expect(GameMarket.deploy(await chip.getAddress(), "FNC", "FNC")).to.be.revertedWith(
       `${GAMEMARKET_LEFT} cannot be the same as ${GAMEMARKET_RIGHT}`
     );
   });
@@ -111,9 +102,7 @@ describe("GameMarket", function () {
     const tx = await gameMarket.setScore(GameScore.Left);
     await tx.wait();
 
-    await expect(gameMarket.setScore(GameScore.Right)).to.be.revertedWith(
-      `${GAMEMARKET_SCORE} can only be set once`
-    );
+    await expect(gameMarket.setScore(GameScore.Right)).to.be.revertedWith(`${GAMEMARKET_SCORE} can only be set once`);
   });
 
   it("only admin can set the game score", async function () {
@@ -121,12 +110,12 @@ describe("GameMarket", function () {
 
     const guest = await ethers.provider.getSigner(1);
 
-    await expect(
-      gameMarket.connect(guest).setScore(GameScore.Left)
-    ).to.be.revertedWith("Only the admin can call this function");
+    await expect(gameMarket.connect(guest).setScore(GameScore.Left)).to.be.revertedWith(
+      "Only the admin can call this function"
+    );
   });
 
-  it("accepts bets", async function () {
+  it("accepts bets and distributes rewards after score is settled", async function () {
     const chip = await deployVChipToken("1000");
     const gameMarket = await deployGameMarket("FNC", "G2", {
       chip: await chip.getAddress(),
@@ -136,104 +125,60 @@ describe("GameMarket", function () {
     const player2 = await ethers.provider.getSigner(1);
     const player3 = await ethers.provider.getSigner(2);
 
-    expect(await chip.balanceOf(await player1.getAddress())).to.equal(
-      ethers.parseEther("1000")
-    );
-    (
-      await chip
-        .connect(player1)
-        .transfer(await player2.getAddress(), ethers.parseEther("100"))
-    ).wait();
-    (
-      await chip
-        .connect(player1)
-        .transfer(await player3.getAddress(), ethers.parseEther("100"))
-    ).wait();
-    expect(await chip.balanceOf(await player1.getAddress())).to.equal(
-      ethers.parseEther("800")
-    );
-    expect(await chip.balanceOf(await player2.getAddress())).to.equal(
-      ethers.parseEther("100")
-    );
-    expect(await chip.balanceOf(await player3.getAddress())).to.equal(
-      ethers.parseEther("100")
-    );
+    expect(await chip.balanceOf(await player1.getAddress())).to.equal(ethers.parseEther("1000"));
+    (await chip.connect(player1).transfer(await player2.getAddress(), ethers.parseEther("100"))).wait();
+    (await chip.connect(player1).transfer(await player3.getAddress(), ethers.parseEther("100"))).wait();
+    expect(await chip.balanceOf(await player1.getAddress())).to.equal(ethers.parseEther("800"));
+    expect(await chip.balanceOf(await player2.getAddress())).to.equal(ethers.parseEther("100"));
+    expect(await chip.balanceOf(await player3.getAddress())).to.equal(ethers.parseEther("100"));
 
-    (
-      await chip
-        .connect(player1)
-        .increaseAllowance(
-          await gameMarket.getAddress(),
-          ethers.parseEther("10")
-        )
-    ).wait();
-    (
-      await chip
-        .connect(player2)
-        .increaseAllowance(
-          await gameMarket.getAddress(),
-          ethers.parseEther("10")
-        )
-    ).wait();
-    (
-      await chip
-        .connect(player3)
-        .increaseAllowance(
-          await gameMarket.getAddress(),
-          ethers.parseEther("10")
-        )
-    ).wait();
+    (await chip.connect(player1).increaseAllowance(await gameMarket.getAddress(), ethers.parseEther("10"))).wait();
+    (await chip.connect(player2).increaseAllowance(await gameMarket.getAddress(), ethers.parseEther("10"))).wait();
+    (await chip.connect(player3).increaseAllowance(await gameMarket.getAddress(), ethers.parseEther("10"))).wait();
 
-    (
-      await gameMarket
-        .connect(player1)
-        .bet(ethers.parseEther("2"), GameScore.Left)
-    ).wait();
+    (await gameMarket.connect(player1).bet(ethers.parseEther("2"), GameScore.Left)).wait();
 
-    (
-      await gameMarket
-        .connect(player2)
-        .bet(ethers.parseEther("10"), GameScore.Right)
-    ).wait();
+    (await gameMarket.connect(player2).bet(ethers.parseEther("10"), GameScore.Right)).wait();
 
-    (
-      await gameMarket
-        .connect(player1)
-        .bet(ethers.parseEther("3"), GameScore.Right)
-    ).wait();
+    (await gameMarket.connect(player1).bet(ethers.parseEther("3"), GameScore.Right)).wait();
 
-    (
-      await gameMarket
-        .connect(player3)
-        .bet(ethers.parseEther("5"), GameScore.Left)
-    ).wait();
+    (await gameMarket.connect(player3).bet(ethers.parseEther("3"), GameScore.Left)).wait();
 
-    (
-      await gameMarket
-        .connect(player1)
-        .bet(ethers.parseEther("3"), GameScore.Left)
-    ).wait();
+    (await gameMarket.connect(player1).bet(ethers.parseEther("3"), GameScore.Left)).wait();
 
-    expect(await chip.balanceOf(await gameMarket.getAddress())).to.equal(
-      ethers.parseEther("23")
-    );
-    expect(await chip.balanceOf(await player1.getAddress())).to.equal(
-      ethers.parseEther("792")
-    );
-    expect(await chip.balanceOf(await player2.getAddress())).to.equal(
-      ethers.parseEther("90")
-    );
-    expect(await chip.balanceOf(await player3.getAddress())).to.equal(
-      ethers.parseEther("95")
-    );
+    expect(await chip.balanceOf(await gameMarket.getAddress())).to.equal(ethers.parseEther("21"));
+    expect(await chip.balanceOf(await player1.getAddress())).to.equal(ethers.parseEther("792"));
+    expect(await chip.balanceOf(await player2.getAddress())).to.equal(ethers.parseEther("90"));
+    expect(await chip.balanceOf(await player3.getAddress())).to.equal(ethers.parseEther("97"));
 
-    const bets = await gameMarket.getBets(await player1.getAddress());
-    console.log("bets", bets);
+    const betsPlayer1 = await gameMarket.getBets(await player1.getAddress());
+    expect(betsPlayer1.length).to.equal(3);
 
-    // ratio = totalPlayerAmountWinnerSide / totalMarketAmountWinnerSide
+    const betsPlayer2 = await gameMarket.getBets(await player2.getAddress());
+    expect(betsPlayer2.length).to.equal(1);
 
-    // winAmount = totalMarketAmountLoserSide * ratio
+    const betsPlayer3 = await gameMarket.getBets(await player3.getAddress());
+    expect(betsPlayer3.length).to.equal(1);
 
-    // return totalPlayerAmountWinnerSide + winAmount
+    await (await gameMarket.connect(player1).setScore(GameScore.Left)).wait();
+
+    const player1Rewards = await gameMarket.getRewards(await player1.getAddress());
+    expect(player1Rewards).to.equal(ethers.parseEther("13.125"));
+
+    const player2Rewards = await gameMarket.getRewards(await player2.getAddress());
+    expect(player2Rewards).to.equal(ethers.parseEther("0"));
+
+    const player3Rewards = await gameMarket.getRewards(await player3.getAddress());
+    expect(player3Rewards).to.equal(ethers.parseEther("7.875"));
+
+    await (await gameMarket.connect(player1).claimRewards()).wait();
+    expect(await chip.balanceOf(await player1.getAddress())).to.equal(ethers.parseEther("805.125"));
+
+    expect(gameMarket.connect(player2).claimRewards()).to.be.revertedWith("No rewards to claim");
+
+    await (await gameMarket.connect(player3).claimRewards()).wait();
+    expect(await chip.balanceOf(await player3.getAddress())).to.equal(ethers.parseEther("104.875"));
+
+    expect(await chip.balanceOf(await gameMarket.getAddress())).to.equal(ethers.parseEther("0"));
   });
 });
