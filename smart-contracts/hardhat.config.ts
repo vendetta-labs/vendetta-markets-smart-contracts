@@ -6,9 +6,7 @@ dotenv.config();
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task("account", "Prints the info of account", async (taskArgs, hre) => {
-  const account = await hre.ethers.Wallet.fromPhrase(
-    process.env.MNEMONIC || ""
-  ).connect(hre.ethers.provider);
+  const account = await hre.ethers.Wallet.fromPhrase(process.env.MNEMONIC || "").connect(hre.ethers.provider);
 
   console.log("Account: ", account.address);
   const balance = await hre.ethers.provider.getBalance(account.address);
@@ -29,9 +27,7 @@ if (!mnemonic) {
 const words = (mnemonic || "").match(/[a-zA-Z]+/g)?.length || 0;
 const validLength = [12, 15, 18, 24];
 if (!validLength.includes(words)) {
-  console.log(
-    `The mnemonic (${process.env.MNEMONIC}) is the wrong number of words`
-  );
+  console.log(`The mnemonic (${process.env.MNEMONIC}) is the wrong number of words`);
   process.exit(-1);
 }
 
@@ -49,6 +45,7 @@ const config: HardhatUserConfig = {
     "op-goerli": {
       url: optimismGoerliUrl,
       accounts: { mnemonic: process.env.MNEMONIC },
+      gasMultiplier: 1.75,
     },
   },
 };

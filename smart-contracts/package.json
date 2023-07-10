@@ -9,6 +9,7 @@
   "scripts": {
     "generate-wallet": "hardhat run scripts/generate-wallet.ts",
     "deploy": "hardhat run --network local scripts/deploy.ts",
+    "deploy-testnet": "hardhat run --network op-goerli scripts/deploy.ts",
     "compile": "hardhat compile",
     "test": "hardhat test"
   },
