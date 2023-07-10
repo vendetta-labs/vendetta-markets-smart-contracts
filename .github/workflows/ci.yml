@@ -12,7 +12,9 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    working-directory: ./smart-contracts
+    defaults:
+      run:
+        working-directory: ./smart-contracts
     steps:
 
       - name: Checkout
