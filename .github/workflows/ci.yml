@@ -17,6 +17,7 @@ jobs:
         working-directory: ./smart-contracts
     env:
       MNEMONIC: ${{ secrets.MNEMONIC }}
+      OPTIMISM_GOERLI_URL: ${{ secrets.OPTIMISM_GOERLI_URL }}
     steps:
 
       - name: Checkout
