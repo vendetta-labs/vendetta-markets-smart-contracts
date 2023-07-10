@@ -36,4 +36,4 @@ jobs:
         run: npm run compile
 
       - name: Run tests
-        run: pnpm run test
+        run: npm run test
