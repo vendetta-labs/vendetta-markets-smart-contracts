@@ -2,7 +2,7 @@
 
 ## How it works
 
-Vendetta Markets is a decentralized esports betting platform deployed on the Optimism network. The protocol operates through a combination of simple contracts, the most important being the `GameMarket`, which holds all the bets placed by the users. 
+Vendetta Markets is a decentralized esports betting platform deployed on the Optimism network. The protocol operates through a combination of simple contracts, the most important being the `Market`, which holds all the bets placed by the users. 
 
 Uses an oracle system fed by a trusted game feed, the protocol accurately determines the outcomes of the markets. 
 
