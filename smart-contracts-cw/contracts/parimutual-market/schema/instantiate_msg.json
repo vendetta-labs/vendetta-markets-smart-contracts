@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "type": "object",
+  "required": [
+    "denom",
+    "fee_bps",
+    "id",
+    "sport",
+    "start_timestamp",
+    "team_a",
+    "team_b",
+    "tournament"
+  ],
+  "properties": {
+    "denom": {
+      "type": "string"
+    },
+    "fee_bps": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "id": {
+      "type": "string"
+    },
+    "sport": {
+      "type": "string"
+    },
+    "start_timestamp": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "team_a": {
+      "type": "string"
+    },
+    "team_b": {
+      "type": "string"
+    },
+    "tournament": {
+      "type": "string"
+    }
+  }
+}

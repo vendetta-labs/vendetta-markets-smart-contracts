@@ -1,0 +1,63 @@
+[workspace]
+members = [
+    "contracts/parimutual-market",
+    #   "integration-tests",
+]
+resolver = "2"
+
+[workspace.package]
+version = "1.0.0"
+authors = [
+    "André Sardo <andre@vendetta.markets>",
+    "Gustavo Mauricio <gustavo@vendetta.markets>",
+]
+edition = "2021"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/vendetta-labs/vendetta-markets"
+homepage = "https://vendetta.markets"
+documentation = "https://docs.vendetta.markets"
+keywords = ["vendetta", "markets", "cosmos", "cosmwasm"]
+
+[workspace.dependencies]
+anyhow = "1.0.71"
+bech32 = "0.9.1"
+cosmwasm-schema = "1.2.6"
+cosmwasm-std = "1.2.6"
+cw2 = "1.1.0"
+cw-storage-plus = "1.0.1"
+cw-utils = "1.0.1"
+prost = { version = "0.11.5", default-features = false, features = [
+    "prost-derive",
+] }
+schemars = "0.8.12"
+snafu = { version = "0.6.3" }
+serde = { version = "1.0.163", default-features = false, features = ["derive"] }
+thiserror = "1.0.40"
+pyth-sdk-cw = "1.2.0"
+cw-paginate = "0.2.1"
+strum = "0.25.0"
+
+# dev-dependencies
+cw-multi-test = "0.16.5"
+cw-it = "0.1.0"
+osmosis-test-tube = "16.0.0"
+test-case = "3.0.0"
+proptest = "1.1.0"
+
+# packages
+# vendetta-markets-testing        = { path = "./packages/testing" }
+# vendetta-markets-utils          = { path = "./packages/utils" }
+
+# contracts
+vendetta-markets-market = { path = "./contracts/market" }
+
+[profile.release]
+codegen-units = 1
+debug = false
+debug-assertions = false
+incremental = false
+lto = true
+overflow-checks = true
+opt-level = 3
+panic = "abort"
+rpath = false
