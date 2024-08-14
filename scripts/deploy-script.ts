@@ -3,6 +3,8 @@ import { getAccountByName } from "@kubiklabs/wasmkit";
 import { VendettaMarketsParimutuelMarketContract } from "../artifacts/typescript_schema/VendettaMarketsParimutuelMarketContract";
 
 export default async function run() {
+  const account_3 = await getAccountByName("account_3");
+
   const contract_owner = await getAccountByName("account_0");
   const parimutuel_contract = new VendettaMarketsParimutuelMarketContract();
   await parimutuel_contract.setupClient();

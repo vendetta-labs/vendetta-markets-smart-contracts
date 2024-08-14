@@ -1,16 +1,21 @@
 #![allow(dead_code)]
 
 use cosmwasm_std::{
-    from_binary,
+    from_json,
     testing::{
-        mock_dependencies_with_balance, mock_env, mock_info, MockApi, MockQuerier, MockStorage,
+        mock_dependencies_with_balance,
+        mock_env,
+        // mock_info,
+        MockApi,
+        MockQuerier,
+        MockStorage,
     },
     Deps, OwnedDeps,
 };
 use vendetta_markets_parimutuel_market::{contract::query, msg::QueryMsg};
 
 pub fn th_setup() -> OwnedDeps<MockStorage, MockApi, MockQuerier> {
-    let mut deps = mock_dependencies_with_balance(&[]);
+    // let mut deps = mock_dependencies_with_balance(&[]);
 
     // instantiate(
     //     deps.as_mut(),
@@ -23,9 +28,10 @@ pub fn th_setup() -> OwnedDeps<MockStorage, MockApi, MockQuerier> {
     // )
     // .unwrap();
 
-    deps
+    // deps
+    mock_dependencies_with_balance(&[])
 }
 
 pub fn th_query<T: serde::de::DeserializeOwned>(deps: Deps, msg: QueryMsg) -> T {
-    from_binary(&query(deps, mock_env(), msg).unwrap()).unwrap()
+    from_json(query(deps, mock_env(), msg).unwrap()).unwrap()
 }

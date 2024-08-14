@@ -40,17 +40,17 @@ pub fn instantiate(
     let state = Config {
         admin_addr: Addr::unchecked(ADMIN_ADDRESS),
         treasury_addr: Addr::unchecked(TREASURY_ADDRESS),
-        fee_bps: msg.fee_bps.clone(),
-        denom: msg.denom.clone(),
+        fee_bps: msg.fee_bps,
+        denom: msg.denom,
     };
     CONFIG.save(deps.storage, &state)?;
 
     let market = Market {
-        id: msg.id.clone(),
-        label: msg.label.clone(),
-        home_team: msg.home_team.clone(),
-        away_team: msg.away_team.clone(),
-        start_timestamp: msg.start_timestamp.clone(),
+        id: msg.id,
+        label: msg.label,
+        home_team: msg.home_team,
+        away_team: msg.away_team,
+        start_timestamp: msg.start_timestamp,
         status: Status::ACTIVE,
         result: None,
     };
@@ -64,12 +64,12 @@ pub fn instantiate(
         .add_attribute("protocol", "vendetta-markets")
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "create_market")
-        .add_attribute("sender", info.sender.clone())
-        .add_attribute("id", msg.id.clone())
-        .add_attribute("label", msg.label.clone())
-        .add_attribute("home_team", msg.home_team.clone())
-        .add_attribute("away_team", msg.away_team.clone())
-        .add_attribute("start_timestamp", msg.start_timestamp.to_string())
+        .add_attribute("sender", info.sender)
+        .add_attribute("id", market.id)
+        .add_attribute("label", market.label)
+        .add_attribute("home_team", market.home_team)
+        .add_attribute("away_team", market.away_team)
+        .add_attribute("start_timestamp", market.start_timestamp.to_string())
         .add_attribute("status", Status::ACTIVE.to_string()))
 }
 
@@ -124,7 +124,7 @@ fn query_bets_by_address(deps: Deps, address: Addr) -> StdResult<Binary> {
     };
 
     let total_draw = if POOL_DRAW.has(deps.storage, address.clone()) {
-        POOL_DRAW.load(deps.storage, address.clone())?
+        POOL_DRAW.load(deps.storage, address)?
     } else {
         0
     };
@@ -155,7 +155,7 @@ fn query_estimate_winnings(deps: Deps, address: Addr, result: MarketResult) -> S
     };
 
     let addr_pool_draw = if POOL_DRAW.has(deps.storage, address.clone()) {
-        POOL_DRAW.load(deps.storage, address.clone())?
+        POOL_DRAW.load(deps.storage, address)?
     } else {
         0
     };
@@ -275,8 +275,8 @@ fn execute_place_bet(
         .add_attribute("protocol", "vendetta-markets")
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "place_bet")
-        .add_attribute("sender", info.sender.clone())
-        .add_attribute("receiver", addr.clone())
+        .add_attribute("sender", info.sender)
+        .add_attribute("receiver", addr)
         .add_attribute("bet_amount", bet_amount.to_string())
         .add_attribute("result", result.to_string()))
 }
@@ -351,7 +351,7 @@ fn execute_claim_winnings(
         let mut fee_amount = Uint128::zero();
         if config.fee_bps > 0 {
             fee_amount = Uint128::from(winnings)
-                .multiply_ratio(Uint128::from(config.fee_bps), Uint128::from(10000 as u128));
+                .multiply_ratio(Uint128::from(config.fee_bps), Uint128::from(10000_u128));
         }
         payout = winnings - fee_amount.u128();
     }
@@ -362,7 +362,7 @@ fn execute_claim_winnings(
         messages.push(
             BankMsg::Send {
                 to_address: addr.to_string(),
-                amount: vec![coin(payout.into(), config.denom)],
+                amount: vec![coin(payout, config.denom)],
             }
             .into(),
         );
@@ -377,8 +377,8 @@ fn execute_claim_winnings(
         .add_attribute("protocol", "vendetta-markets")
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "claim_winnings")
-        .add_attribute("sender", info.sender.clone())
-        .add_attribute("receiver", addr.clone())
+        .add_attribute("sender", info.sender)
+        .add_attribute("receiver", addr)
         .add_attribute("payout", payout.to_string()))
 }
 
@@ -407,7 +407,7 @@ fn execute_update(
         .add_attribute("protocol", "vendetta-markets")
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "update_market")
-        .add_attribute("sender", info.sender.clone())
+        .add_attribute("sender", info.sender)
         .add_attribute("start_timestamp", start_timestamp.to_string()))
 }
 
@@ -439,7 +439,7 @@ fn execute_score(
     let mut fee_amount = Uint128::zero();
     if config.fee_bps > 0 {
         fee_amount = Uint128::from(total_home + total_away + total_draw)
-            .multiply_ratio(Uint128::from(config.fee_bps), Uint128::from(10000 as u128));
+            .multiply_ratio(Uint128::from(config.fee_bps), Uint128::from(10000_u128));
     }
 
     let mut messages: Vec<CosmosMsg> = vec![];
@@ -459,10 +459,10 @@ fn execute_score(
         .add_attribute("protocol", "vendetta-markets")
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "score_market")
-        .add_attribute("sender", info.sender.clone())
+        .add_attribute("sender", info.sender)
         .add_attribute("status", Status::CLOSED.to_string())
-        .add_attribute("result", result.clone().to_string())
-        .add_attribute("fee_collected", fee_amount.clone()))
+        .add_attribute("result", result.to_string())
+        .add_attribute("fee_collected", fee_amount))
 }
 
 fn execute_cancel(deps: DepsMut, info: MessageInfo) -> Result<Response, ContractError> {
@@ -486,6 +486,6 @@ fn execute_cancel(deps: DepsMut, info: MessageInfo) -> Result<Response, Contract
         .add_attribute("protocol", "vendetta-markets")
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "cancel_market")
-        .add_attribute("sender", info.sender.clone())
+        .add_attribute("sender", info.sender)
         .add_attribute("status", Status::CANCELLED.to_string()))
 }

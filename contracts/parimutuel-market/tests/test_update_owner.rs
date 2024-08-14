@@ -1,6 +1,6 @@
-use cosmwasm_std::testing::{mock_env, mock_info};
+// use cosmwasm_std::testing::{mock_env, mock_info};
 
-use crate::helpers::{th_query, th_setup};
+// use crate::helpers::{th_query, th_setup};
 
 mod helpers;
 

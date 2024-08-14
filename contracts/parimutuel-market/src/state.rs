@@ -1,3 +1,5 @@
+use std::fmt;
+
 use cosmwasm_std::Addr;
 use cw_storage_plus::{Item, Map};
 use schemars::JsonSchema;
@@ -28,12 +30,12 @@ pub enum Status {
     CANCELLED,
 }
 
-impl Status {
-    pub fn to_string(&self) -> String {
+impl fmt::Display for Status {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Status::ACTIVE => "ACTIVE".to_string(),
-            Status::CLOSED => "CLOSED".to_string(),
-            Status::CANCELLED => "CANCELLED".to_string(),
+            Status::ACTIVE => write!(f, "ACTIVE"),
+            Status::CLOSED => write!(f, "CLOSED"),
+            Status::CANCELLED => write!(f, "CANCELLED"),
         }
     }
 }
@@ -45,12 +47,12 @@ pub enum MarketResult {
     DRAW,
 }
 
-impl MarketResult {
-    pub fn to_string(&self) -> String {
+impl fmt::Display for MarketResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            MarketResult::HOME => "HOME".to_string(),
-            MarketResult::AWAY => "AWAY".to_string(),
-            MarketResult::DRAW => "DRAW".to_string(),
+            MarketResult::HOME => write!(f, "HOME"),
+            MarketResult::AWAY => write!(f, "AWAY"),
+            MarketResult::DRAW => write!(f, "DRAW"),
         }
     }
 }
