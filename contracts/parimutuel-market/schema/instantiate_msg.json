@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "type": "object",
+  "required": [
+    "away_team",
+    "denom",
+    "fee_bps",
+    "home_team",
+    "id",
+    "label",
+    "start_timestamp"
+  ],
+  "properties": {
+    "away_team": {
+      "type": "string"
+    },
+    "denom": {
+      "type": "string"
+    },
+    "fee_bps": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "home_team": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "start_timestamp": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    }
+  }
+}
