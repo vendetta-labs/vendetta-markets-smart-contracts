@@ -28,3 +28,4 @@ whitelists/
 artifacts/
 
 yarn-error.log
+.wasmkit.config.js
