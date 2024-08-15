@@ -278,7 +278,10 @@ fn execute_place_bet(
         .add_attribute("sender", info.sender)
         .add_attribute("receiver", addr)
         .add_attribute("bet_amount", bet_amount.to_string())
-        .add_attribute("result", result.to_string()))
+        .add_attribute("result", result.to_string())
+        .add_attribute("total_home", TOTAL_HOME.load(deps.storage)?.to_string())
+        .add_attribute("total_away", TOTAL_AWAY.load(deps.storage)?.to_string())
+        .add_attribute("total_draw", TOTAL_DRAW.load(deps.storage)?.to_string()))
 }
 
 fn execute_claim_winnings(
@@ -408,7 +411,10 @@ fn execute_update(
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "update_market")
         .add_attribute("sender", info.sender)
-        .add_attribute("start_timestamp", start_timestamp.to_string()))
+        .add_attribute("start_timestamp", start_timestamp.to_string())
+        .add_attribute("total_home", TOTAL_HOME.load(deps.storage)?.to_string())
+        .add_attribute("total_away", TOTAL_AWAY.load(deps.storage)?.to_string())
+        .add_attribute("total_draw", TOTAL_DRAW.load(deps.storage)?.to_string()))
 }
 
 fn execute_score(
@@ -436,6 +442,22 @@ fn execute_score(
     let total_away = TOTAL_AWAY.load(deps.storage)?;
     let total_draw = TOTAL_DRAW.load(deps.storage)?;
 
+    let winning_side = match result {
+        MarketResult::HOME => total_home,
+        MarketResult::AWAY => total_away,
+        MarketResult::DRAW => total_draw,
+    };
+
+    let losing_side = match result {
+        MarketResult::HOME => total_away + total_draw,
+        MarketResult::AWAY => total_home + total_draw,
+        MarketResult::DRAW => total_home + total_away,
+    };
+
+    if winning_side <= 0 || losing_side <= 0 {
+        return Err(ContractError::NoWinnings {});
+    }
+
     let mut fee_amount = Uint128::zero();
     if config.fee_bps > 0 {
         fee_amount = Uint128::from(total_home + total_away + total_draw)
@@ -462,7 +484,10 @@ fn execute_score(
         .add_attribute("sender", info.sender)
         .add_attribute("status", Status::CLOSED.to_string())
         .add_attribute("result", result.to_string())
-        .add_attribute("fee_collected", fee_amount))
+        .add_attribute("fee_collected", fee_amount)
+        .add_attribute("total_home", total_home.to_string())
+        .add_attribute("total_away", total_away.to_string())
+        .add_attribute("total_draw", total_draw.to_string()))
 }
 
 fn execute_cancel(deps: DepsMut, info: MessageInfo) -> Result<Response, ContractError> {
@@ -487,5 +512,8 @@ fn execute_cancel(deps: DepsMut, info: MessageInfo) -> Result<Response, Contract
         .add_attribute("market_type", "parimutuel")
         .add_attribute("action", "cancel_market")
         .add_attribute("sender", info.sender)
-        .add_attribute("status", Status::CANCELLED.to_string()))
+        .add_attribute("status", Status::CANCELLED.to_string())
+        .add_attribute("total_home", TOTAL_HOME.load(deps.storage)?.to_string())
+        .add_attribute("total_away", TOTAL_AWAY.load(deps.storage)?.to_string())
+        .add_attribute("total_draw", TOTAL_DRAW.load(deps.storage)?.to_string()))
 }
