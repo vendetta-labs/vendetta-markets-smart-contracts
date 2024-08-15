@@ -8,6 +8,7 @@
     "fee_bps",
     "home_team",
     "id",
+    "is_drawable",
     "label",
     "start_timestamp"
   ],
@@ -28,6 +29,9 @@
     },
     "id": {
       "type": "string"
+    },
+    "is_drawable": {
+      "type": "boolean"
     },
     "label": {
       "type": "string"
