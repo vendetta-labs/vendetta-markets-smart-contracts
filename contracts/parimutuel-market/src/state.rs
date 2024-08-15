@@ -66,4 +66,5 @@ pub struct Market {
     pub start_timestamp: u64,
     pub status: Status,
     pub result: Option<MarketResult>,
+    pub is_drawable: bool,
 }

@@ -18,6 +18,9 @@ pub enum ContractError {
     #[error("Market not closed")]
     MarketNotClosed {},
 
+    #[error("Market not drawable")]
+    MarketNotDrawable {},
+
     #[error("Bets no longer accepted")]
     BetsNotAccepted {},
 

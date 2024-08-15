@@ -53,6 +53,7 @@ pub fn instantiate(
         start_timestamp: msg.start_timestamp,
         status: Status::ACTIVE,
         result: None,
+        is_drawable: msg.is_drawable,
     };
     MARKET.save(deps.storage, &market)?;
 
@@ -219,6 +220,10 @@ fn execute_place_bet(
         Some(receiver) => deps.api.addr_validate(receiver.as_str())?,
         None => info.sender.clone(),
     };
+
+    if !market.is_drawable && result == MarketResult::DRAW {
+        return Err(ContractError::MarketNotDrawable {});
+    }
 
     if market.status != Status::ACTIVE {
         return Err(ContractError::MarketNotActive {});
@@ -427,6 +432,10 @@ fn execute_score(
 
     if info.sender != config.admin_addr {
         return Err(ContractError::Unauthorized {});
+    }
+
+    if !market.is_drawable && result == MarketResult::DRAW {
+        return Err(ContractError::MarketNotDrawable {});
     }
 
     if market.status != Status::ACTIVE {

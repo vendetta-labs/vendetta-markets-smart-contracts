@@ -13,6 +13,7 @@ pub struct InstantiateMsg {
     pub home_team: String,
     pub away_team: String,
     pub start_timestamp: u64,
+    pub is_drawable: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]
