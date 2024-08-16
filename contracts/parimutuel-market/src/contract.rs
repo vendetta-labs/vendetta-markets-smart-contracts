@@ -201,7 +201,7 @@ pub fn execute(
         } => execute_update(deps, info, start_timestamp),
         ExecuteMsg::Score {
             result,
-        } => execute_score(deps, info, result),
+        } => execute_score(deps, env, info, result),
         ExecuteMsg::Cancel {} => execute_cancel(deps, info),
     }
 }
@@ -424,6 +424,7 @@ fn execute_update(
 
 fn execute_score(
     deps: DepsMut,
+    env: Env,
     info: MessageInfo,
     result: MarketResult,
 ) -> Result<Response, ContractError> {
@@ -440,6 +441,11 @@ fn execute_score(
 
     if market.status != Status::ACTIVE {
         return Err(ContractError::MarketNotActive {});
+    }
+
+    // Market can only be scored after 30 minutes of its start timestamp
+    if env.block.time.seconds() < market.start_timestamp + 30 * 60 {
+        return Err(ContractError::MarketNotScoreable {});
     }
 
     let mut market = market;

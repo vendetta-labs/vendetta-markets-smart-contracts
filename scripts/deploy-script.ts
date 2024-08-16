@@ -3,8 +3,6 @@ import { getAccountByName } from "@kubiklabs/wasmkit";
 import { VendettaMarketsParimutuelMarketContract } from "../artifacts/typescript_schema/VendettaMarketsParimutuelMarketContract";
 
 export default async function run() {
-  const account_3 = await getAccountByName("account_3");
-
   const contract_owner = await getAccountByName("account_0");
   const parimutuel_contract = new VendettaMarketsParimutuelMarketContract();
   await parimutuel_contract.setupClient();
@@ -16,14 +14,33 @@ export default async function run() {
     {
       denom: "untrn",
       fee_bps: 250, // 2.5%
-      id: "TEST 2",
-      label: "League of Legends - EU LCS - Team A vs Team B",
+      id: "game-cs2-test-league",
+      label: "CS2 - Test League - Team A vs Team B",
       home_team: "Team A",
       away_team: "Team B",
-      start_timestamp: 1751918972,
+      start_timestamp:
+        Number((new Date().getTime() / 1000).toFixed(0)) + 60 * 10, // 10 minutes from now
+      is_drawable: true,
     },
-    `Vendetta Markets - Parimutuel Market v2.0.0`,
+    `Vendetta Markets - Parimutuel Market v2.0.0 - Drawable`,
     contract_owner
   );
   console.log(contract_info);
+
+  // const contract_info = await parimutuel_contract.instantiate(
+  //   {
+  //     denom: "untrn",
+  //     fee_bps: 250, // 2.5%
+  //     id: "game-cs2-final",
+  //     label: "CS2 - Final - Home Team vs Away Team",
+  //     home_team: "Home Team",
+  //     away_team: "Away Team",
+  //     start_timestamp:
+  //       Number((new Date().getTime() / 1000).toFixed(0)) + 60 * 10, // 10 minutes from now
+  //     is_drawable: false,
+  //   },
+  //   `Vendetta Markets - Parimutuel Market v2.0.0 - Non-Drawable`,
+  //   contract_owner
+  // );
+  // console.log(contract_info);
 }
