@@ -71,6 +71,7 @@ pub fn instantiate(
         .add_attribute("home_team", market.home_team)
         .add_attribute("away_team", market.away_team)
         .add_attribute("start_timestamp", market.start_timestamp.to_string())
+        .add_attribute("is_drawable", msg.is_drawable.to_string())
         .add_attribute("status", Status::ACTIVE.to_string()))
 }
 
