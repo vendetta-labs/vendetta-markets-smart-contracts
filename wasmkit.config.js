@@ -1,7 +1,7 @@
 const neutron_testnet_accounts = [
   {
     name: "account_0",
-    address: "neutron1z7pj2zh928a8rm0ztkx2vfxeyz8txw6g24n795",
+    address: "neutron1092vvj705t2a4rth2wdrvw5a6r3s37d67e58s8",
     mnemonic: "",
   },
 ];
@@ -9,7 +9,7 @@ const neutron_testnet_accounts = [
 const neutron_localnet_accounts = [
   {
     name: "account_0",
-    address: "neutron1z7pj2zh928a8rm0ztkx2vfxeyz8txw6g24n795",
+    address: "neutron1092vvj705t2a4rth2wdrvw5a6r3s37d67e58s8",
     mnemonic: "",
   },
   {
@@ -35,7 +35,7 @@ const neutron_localnet_accounts = [
 const neutron_mainnet_accounts = [
   {
     name: "account_0",
-    address: "neutron1z7pj2zh928a8rm0ztkx2vfxeyz8txw6g24n795",
+    address: "neutron1092vvj705t2a4rth2wdrvw5a6r3s37d67e58s8",
     mnemonic: "",
   },
 ];

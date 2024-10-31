@@ -20,7 +20,7 @@ use crate::{
 pub const CONTRACT_NAME: &str = env!("CARGO_PKG_NAME");
 pub const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-const ADMIN_ADDRESS: &str = "neutron1z7pj2zh928a8rm0ztkx2vfxeyz8txw6g24n795";
+const ADMIN_ADDRESS: &str = "neutron15yhlj25av4fkw6s8qwnzerp490pkxmn9094g7r";
 const TREASURY_ADDRESS: &str = "neutron12v9pqx602k3rzm5hf4jewepl8na4x89ja4td24";
 
 #[cfg_attr(not(feature = "library"), entry_point)]
