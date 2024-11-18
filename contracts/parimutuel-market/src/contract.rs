@@ -470,7 +470,7 @@ fn execute_score(
         MarketResult::DRAW => total_home + total_away,
     };
 
-    if winning_side <= 0 || losing_side <= 0 {
+    if winning_side == 0 || losing_side == 0 {
         return Err(ContractError::NoWinnings {});
     }
 
