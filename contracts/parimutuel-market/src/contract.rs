@@ -358,7 +358,7 @@ fn execute_claim_winnings(
                 .multiply_ratio(Uint128::from(config.fee_bps), Uint128::from(10000_u128));
         }
 
-        let payout = calculate_parimutuel_winnings(
+        payout = calculate_parimutuel_winnings(
             total_home + total_away + total_draw - fee_amount.u128(),
             team_bets,
             bet_amount,
