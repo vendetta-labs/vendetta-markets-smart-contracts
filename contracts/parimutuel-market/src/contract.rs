@@ -359,7 +359,7 @@ fn execute_claim_winnings(
         }
 
         let payout = calculate_parimutuel_winnings(
-            total_home + total_away + total_draw - fee_amount,
+            total_home + total_away + total_draw - fee_amount.u128(),
             team_bets,
             bet_amount,
         );
