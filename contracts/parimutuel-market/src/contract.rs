@@ -352,17 +352,17 @@ fn execute_claim_winnings(
             None => 0,
         };
 
-        let winnings = calculate_parimutuel_winnings(
-            total_home + total_away + total_draw,
+        let mut fee_amount = Uint128::zero();
+        if config.fee_bps > 0 {
+            fee_amount = Uint128::from(total_home + total_away + total_draw)
+                .multiply_ratio(Uint128::from(config.fee_bps), Uint128::from(10000_u128));
+        }
+
+        let payout = calculate_parimutuel_winnings(
+            total_home + total_away + total_draw - fee_amount,
             team_bets,
             bet_amount,
         );
-        let mut fee_amount = Uint128::zero();
-        if config.fee_bps > 0 {
-            fee_amount = Uint128::from(winnings)
-                .multiply_ratio(Uint128::from(config.fee_bps), Uint128::from(10000_u128));
-        }
-        payout = winnings - fee_amount.u128();
     }
 
     let mut messages: Vec<CosmosMsg> = vec![];
