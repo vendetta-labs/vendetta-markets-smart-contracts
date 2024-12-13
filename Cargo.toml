@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "contracts/parimutuel-market",
+    "contracts/fixed-odds-market",
     #   "integration-tests",
 ]
 resolver = "2"
@@ -50,6 +51,7 @@ proptest = "1.1.0"
 
 # contracts
 vendetta-markets-parimutuel-market = { path = "./contracts/parimutuel-market" }
+vendetta-markets-fixed-odds-market = { path = "./contracts/fixed-odds-market" }
 
 [profile.release]
 codegen-units = 1

@@ -12,6 +12,7 @@ fn main() -> std::io::Result<()> {
 
     let contracts = vec![
         "vendetta-markets-parimutuel-market",
+        "vendetta-markets-fixed-odds-market",
     ];
 
     for contract in contracts {
